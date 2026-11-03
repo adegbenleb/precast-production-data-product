@@ -101,7 +101,8 @@ def generate(out: Path) -> None:
                 code, _, base_weight, base_cycle = rng.choice(ELEMENT_TYPES)
                 quantity = rng.randint(3, 15)
                 planned_start = datetime.combine(day, datetime.min.time()) + timedelta(hours=6)
-                due_date = (planned_start + timedelta(days=rng.randint(18, 40))).date()
+                # 12 to 30 days gives about 87% on time overall, with Plant C clearly worse
+                due_date = (planned_start + timedelta(days=rng.randint(12, 30))).date()
                 created = planned_start - timedelta(days=rng.randint(5, 20))
                 orders.append((order_id, plant_id, project_id, code, quantity, planned_start, due_date))
 

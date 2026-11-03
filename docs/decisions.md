@@ -32,3 +32,8 @@ Important design choices and why we made them.
 ## 7. Descriptions live in dbt YAML and are pushed to Unity Catalog
 **Decision:** `+persist_docs` (relation and columns) is on for all models.
 **Why:** One source of truth for documentation. The same text shows in dbt docs, in Catalog Explorer and to Genie, which reads column comments to understand the data.
+
+## 8. Rework rate counts elements that needed rework, not "final result rework"
+**Decision:** Rework rate = elements with any rework inspection (`was_reworked`) / inspected elements. The spec said "elements with final result rework / inspected elements".
+**Why:** Reworked elements are always re-inspected, so their final result is pass or scrap. The spec definition always returns 0%. Counting elements that needed rework is what the KPI is meant to show.
+**Trade-off:** Deviates from the agreed spec definition. In a real company this change would be agreed with production leadership and documented in the metric view's description, which we do.

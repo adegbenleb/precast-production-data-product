@@ -144,6 +144,10 @@ models:
         description: When the latest inspection happened.
       - name: passed_first_time
         description: True when the first inspection was a pass. NULL if not inspected.
+      - name: was_reworked
+        description: >
+          True when any inspection of the element had result rework. NULL if not inspected.
+          Numerator of the rework rate (reworked elements are always re-inspected, so their final result is pass or scrap).
       - name: delivered_at
         description: When the element arrived on site. NULL if not delivered yet.
       - name: due_date

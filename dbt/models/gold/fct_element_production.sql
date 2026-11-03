@@ -6,6 +6,7 @@ with inspections as (
     select
         element_id,
         count(*) as inspection_count,
+        count_if(result = 'rework') > 0 as was_reworked,
         min_by(result, inspected_at) as first_result,
         max_by(result, inspected_at) as final_result,
         max(inspected_at) as final_inspected_at
@@ -29,6 +30,9 @@ select
     i.final_result,
     i.final_inspected_at,
     i.first_result = 'pass' as passed_first_time,
+    -- Rework rate uses this, not final_result = 'rework': reworked elements are always re-inspected,
+    -- so their final result is pass or scrap and "final result rework" would always be 0.
+    i.was_reworked,
     d.delivered_at,
     o.due_date,
     case
