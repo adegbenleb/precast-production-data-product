@@ -207,9 +207,10 @@ def generate(out: Path) -> None:
         received = at
         if rng.random() < 0.05:
             received = at + timedelta(days=rng.uniform(20, 45))
-            stats["late_inspections"] += received.month != at.month
         if received > CUTOFF:
             received = CUTOFF
+        # Count after the cutoff clamp, so the number matches what actually lands in the files
+        stats["late_inspections"] += received.month != at.month
         by_file[received.strftime("%Y_%m")].append([f"INS{i:06d}", element_id, ts(at), result, defect])
     for month, rows in sorted(by_file.items()):
         write_csv(

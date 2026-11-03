@@ -27,3 +27,11 @@ Write one entry for every real problem you hit. These entries become your interv
 **What I did:** Skipped brew. Downloaded the official Databricks CLI release (v1.23.0, darwin_arm64) from GitHub, verified it against the published SHA256SUMS, and installed it to `~/.local/bin`, a user-owned folder already on PATH. No sudo needed.
 **Lesson:** Read the permission error before following the suggested fix. The "fix" printed by a tool can have side effects on other users. Official release binaries plus checksum verification are a clean fallback when a package manager isn't usable.
 **Business impact:** On locked-down company laptops, admin rights and package managers are often unavailable. Knowing a no-sudo, verified install path keeps onboarding moving without weakening security.
+
+## Entry 3
+**Date / step:** 2026-11-03, bronze load (0:15 to 0:40)
+**What happened:** The generator's summary said 222 inspections arrived in a later month's file. Querying bronze (`inspected_at` month vs. the month in `_source_file`) returned 192. Same data, two different numbers.
+**Cause:** The generator counted a row as "late" before clamping its arrival date to the 31 October extract cutoff. Late October inspections pushed past the cutoff were clamped back into the October file, so they were not late at all, but were still counted.
+**What I did:** Moved the count after the clamp. Re-ran the generator and checked the CSVs were byte-identical (only the summary line changed), so nothing had to be re-uploaded. Both now say 192.
+**Lesson:** Reconcile the numbers a source claims against what actually landed in the platform. The data was right and the report about it was wrong, and only an independent query showed that.
+**Business impact:** This is the core problem the product exists to solve: two reports, two numbers, no trust. A reconciliation check between source counts and bronze counts catches it before a manager sees mismatching figures.
