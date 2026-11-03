@@ -37,3 +37,8 @@ Important design choices and why we made them.
 **Decision:** Rework rate = elements with any rework inspection (`was_reworked`) / inspected elements. The spec said "elements with final result rework / inspected elements".
 **Why:** Reworked elements are always re-inspected, so their final result is pass or scrap. The spec definition always returns 0%. Counting elements that needed rework is what the KPI is meant to show.
 **Trade-off:** Deviates from the agreed spec definition. In a real company this change would be agreed with production leadership and documented in the metric view's description, which we do.
+
+## 9. Row filter on the fact table, driven by a mapping table
+**Decision:** `ref.plant_row_filter(plant_key)` on `gold.fct_element_production`, looking up `ref.user_plant_access (user_email, plant_id)`. `plant_id = 'ALL'` gives leadership access. Users without a row see nothing.
+**Why:** Filtering the certified fact table once means the metric view, dashboard and Genie inherit it, with no per-consumer rules. Access is managed as data (add a row), not by editing the function. Deny by default is the safe failure mode.
+**Trade-off:** The filter is re-applied by a dbt post-hook because `CREATE OR REPLACE` drops it. In production we would map Databricks groups instead of individual emails (`is_account_group_member`) and run dbt as a service principal with `ALL` access.

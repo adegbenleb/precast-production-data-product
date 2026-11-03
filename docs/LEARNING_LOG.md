@@ -59,3 +59,11 @@ Write one entry for every real problem you hit. These entries become your interv
 **What I did:** Renamed the joins after their tables (`dim_plant`, `dim_element_type`, `dim_project`) and kept the business-friendly dimension names (`plant`, `element_type`). Re-ran it, and the seven KPIs by plant matched a direct query on the fact table exactly.
 **Lesson:** Name things by role: technical names for joins, business names for what users and Genie see. And verify a new metric layer against an independent query before anyone uses it.
 **Business impact:** The metric view is the single definition every dashboard and Genie answer depends on. Proving it matches the certified fact table is what makes "one number per KPI" trustworthy.
+
+## Entry 7
+**Date / step:** 2026-11-04, row filter (1:10 to 1:30)
+**What happened:** After adding the row filter and mapping myself to Plant A, `dbt build` reported `73 of 86 FAIL 1 assert_fact_has_one_row_per_element ... Got 1 result, configured to fail if != 0` (`PASS=85 ERROR=1`). The data was fine.
+**Cause:** Row filters apply to everyone who queries the table, including the identity running dbt. dbt counted only the 1,555 Plant A rows I was allowed to see against all 4,861 produced elements. Separately, dbt rebuilds the fact table with `CREATE OR REPLACE`, which would drop the filter.
+**What I did:** Added a dbt post-hook that re-applies `SET ROW FILTER` after every build, and checked `information_schema.row_filters` to confirm the filter survives a rebuild. Switched my mapping to `ALL` (leadership access) with `sql/21_access_all_plants.sql`; the next build passed 86 of 86.
+**Lesson:** Security on the data affects the pipeline too. The identity that builds and tests the data needs full access, while people get filtered access. Also check that a rebuild does not silently remove governance settings.
+**Business impact:** Without the post-hook, the first scheduled dbt run would expose every plant's numbers to every plant manager without any error. Without a properly scoped service identity, tests would raise false alarms and teams would learn to ignore them.
