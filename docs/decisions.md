@@ -18,3 +18,8 @@ Important design choices and why we made them.
 ## 4. Inspections arrive as monthly extract files
 **Decision:** Inspections are written as `quality_inspections_YYYY_MM.csv`, by the month the row was received, so some rows land in a later month's file (planted problem 3).
 **Why:** Mirrors how a real source system delivers incremental extracts. Silver must take the final result by `inspected_at`, not by which file a row came from.
+
+## 5. Bronze: all columns as STRING, full reload
+**Decision:** Bronze tables are built with `CREATE OR REPLACE TABLE ... AS SELECT ... FROM read_files(..., inferColumnTypes => false)`.
+**Why:** Strings keep the raw data exactly as delivered (kg weights, whitespace ids, blank dates), so every fix happens visibly in silver with a test. A full reload is idempotent and simple for a fixed demo dataset.
+**Trade-off:** A production pipeline would load incrementally (Auto Loader or `COPY INTO`) so it only processes new files and keeps load history. That is a possible stretch step with the Lakeflow Job.
