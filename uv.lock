@@ -1178,12 +1178,14 @@ name = "precast-production-data-product"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "databricks-sdk" },
     { name = "dbt-databricks" },
     { name = "pandas" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "databricks-sdk", specifier = ">=0.117.0" },
     { name = "dbt-databricks", specifier = ">=1.13.0" },
     { name = "pandas", specifier = ">=3.1.0" },
 ]
