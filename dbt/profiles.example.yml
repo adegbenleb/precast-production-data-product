@@ -1,0 +1,14 @@
+# Copy to dbt/profiles.yml and fill in your workspace host and SQL warehouse HTTP path
+# (SQL Warehouses > your warehouse > Connection details). OAuth opens a browser to log in,
+# so no token is stored in this file.
+precast:
+  target: dev
+  outputs:
+    dev:
+      type: databricks
+      catalog: production_dp
+      schema: silver
+      host: dbc-xxxxxxxx-xxxx.cloud.databricks.com
+      http_path: /sql/1.0/warehouses/xxxxxxxxxxxxxxxx
+      auth_type: oauth
+      threads: 4
