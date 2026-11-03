@@ -13,34 +13,36 @@ comment: >
   Rework rate counts elements that needed rework at any inspection (see docs/decisions.md, decision 8).
 source: production_dp.gold.fct_element_production
 
+# Join names differ from dimension names on purpose: they share one namespace, so a join
+# called "plant" next to a dimension called "plant" makes plant.plant_name fail.
 joins:
-  - name: plant
+  - name: dim_plant
     source: production_dp.gold.dim_plant
-    on: source.plant_key = plant.plant_key
-  - name: element_type
+    on: source.plant_key = dim_plant.plant_key
+  - name: dim_element_type
     source: production_dp.gold.dim_element_type
-    on: source.element_type_key = element_type.element_type_key
-  - name: project
+    on: source.element_type_key = dim_element_type.element_type_key
+  - name: dim_project
     source: production_dp.gold.dim_project
-    on: source.project_key = project.project_key
+    on: source.project_key = dim_project.project_key
 
 dimensions:
   - name: plant
-    expr: plant.plant_name
+    expr: dim_plant.plant_name
     display_name: Plant
     comment: Plant that produced the element (Plant A, Plant B, Plant C).
     synonyms: [factory, site, werk]
   - name: region
-    expr: plant.region
+    expr: dim_plant.region
     display_name: Region
     comment: Region the plant belongs to (North, Central, South).
   - name: element_type
-    expr: element_type.element_type_name
+    expr: dim_element_type.element_type_name
     display_name: Element Type
     comment: Precast element type, for example hollow-core slab or sandwich wall panel.
     synonyms: [product, product type, element]
   - name: building_type
-    expr: project.building_type
+    expr: dim_project.building_type
     display_name: Building Type
     comment: Type of building the project is for. Unknown when the order had no project.
   - name: production_month

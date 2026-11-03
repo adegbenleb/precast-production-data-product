@@ -51,3 +51,11 @@ Write one entry for every real problem you hit. These entries become your interv
 **What I did:** Tested three due date ranges locally with pandas before touching Databricks (10 to 28: 80%, 8 to 24: 68%, 12 to 30: 87% with Plant C at 73%). Chose 12 to 30, regenerated, and reloaded bronze and dbt.
 **Lesson:** Profile the distribution behind a KPI (here, days early or late), not only the headline number. A KPI that is near 100% everywhere carries no decision value.
 **Business impact:** A KPI that never moves gets ignored. Realistic variation is what lets leadership see which plant (here Plant C) needs attention on delivery reliability.
+
+## Entry 6
+**Date / step:** 2026-11-04, metric view (1:10 to 1:30)
+**What happened:** `CREATE OR REPLACE VIEW ... WITH METRICS` failed with `[INVALID_EXTRACT_BASE_FIELD_TYPE] Can't extract a value from "plant.plant_name". Need a complex type [STRUCT, ARRAY, MAP] but got "STRING".`
+**Cause:** The join to `dim_plant` was named `plant`, and so was the dimension. In a metric view, join names and dimension names share one namespace, so `plant.plant_name` resolved `plant` to the dimension (a STRING) and tried to read a struct field from it.
+**What I did:** Renamed the joins after their tables (`dim_plant`, `dim_element_type`, `dim_project`) and kept the business-friendly dimension names (`plant`, `element_type`). Re-ran it, and the seven KPIs by plant matched a direct query on the fact table exactly.
+**Lesson:** Name things by role: technical names for joins, business names for what users and Genie see. And verify a new metric layer against an independent query before anyone uses it.
+**Business impact:** The metric view is the single definition every dashboard and Genie answer depends on. Proving it matches the certified fact table is what makes "one number per KPI" trustworthy.
