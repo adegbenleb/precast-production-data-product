@@ -1,0 +1,173 @@
+version: 2
+
+models:
+  - name: stg_plants
+    description: Cleaned plants. One row per plant.
+    columns:
+      - name: plant_id
+        description: Official plant identifier (P01, P02, P03).
+        data_tests: [unique, not_null]
+      - name: plant_name
+        description: Official plant name (Plant A, Plant B, Plant C).
+        data_tests: [unique, not_null]
+      - name: region
+        description: Sales region the plant belongs to.
+        data_tests: [not_null]
+
+  - name: stg_element_types
+    description: Cleaned precast element types. One row per type.
+    columns:
+      - name: element_type_code
+        description: Short code for the element type, for example HCS for hollow-core slab.
+        data_tests: [unique, not_null]
+      - name: element_type_name
+        description: Readable element type name, for example hollow-core slab.
+        data_tests: [not_null]
+      - name: weight_unit
+        description: Unit the source system claims for weights. Always t, but not every weight row follows it.
+
+  - name: stg_projects
+    description: Cleaned construction projects. One row per project.
+    columns:
+      - name: project_id
+        description: Project identifier.
+        data_tests: [unique, not_null]
+      - name: project_name
+        description: Project name.
+      - name: site_city
+        description: City of the construction site.
+      - name: building_type
+        description: Type of building, for example residential or parking garage.
+        data_tests: [not_null]
+
+  - name: stg_production_orders
+    description: >
+      Production orders, one row per order. Duplicates are removed by keeping the latest updated_at
+      (problem 2), plant names are mapped to plant_id through ref.plant_name_mapping (problem 1), and
+      blank strings are turned into NULL (problem 5).
+    columns:
+      - name: order_id
+        description: Production order identifier. Unique after deduplication.
+        data_tests: [unique, not_null]
+      - name: plant_id
+        description: Official plant identifier, mapped from the free-text plant name.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_plants')
+                field: plant_id
+      - name: plant_name_raw
+        description: Plant name exactly as typed in the source, kept for traceability.
+      - name: project_id
+        description: Project the order is for. NULL when the source sent a blank value.
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('stg_projects')
+                field: project_id
+      - name: element_type_code
+        description: Element type ordered.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_element_types')
+                field: element_type_code
+      - name: quantity
+        description: Number of elements ordered.
+        data_tests: [not_null]
+      - name: planned_start
+        description: Planned production start.
+      - name: due_date
+        description: Date the elements are due on site. NULL when missing in the source; such orders are excluded from on-time delivery.
+      - name: updated_at
+        description: When this order version was last changed in the source. Used to pick the latest version.
+
+  - name: stg_produced_elements
+    description: >
+      Produced elements, one row per element. Weights are standardised to tonnes with a documented rule:
+      a raw weight above 100 is kilograms (problem 4).
+    columns:
+      - name: element_id
+        description: Produced element identifier.
+        data_tests: [unique, not_null]
+      - name: order_id
+        description: Production order the element belongs to.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_production_orders')
+                field: order_id
+      - name: production_start
+        description: When production of the element started.
+        data_tests: [not_null]
+      - name: production_end
+        description: When production of the element finished. Drives the period for Elements produced.
+        data_tests: [not_null]
+      - name: weight_raw
+        description: Weight as delivered by the source, in tonnes or kilograms.
+      - name: weight_unit_detected
+        description: Unit detected by the rule (kg when the raw weight is above 100, otherwise t).
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['t', 'kg']
+      - name: weight_t
+        description: Weight in tonnes after unit standardisation.
+        data_tests: [not_null]
+
+  - name: stg_quality_inspections
+    description: >
+      Quality inspections, one row per inspection, from all monthly extract files. arrived_late marks rows
+      delivered in a later month's file than the inspection happened (problem 3).
+    columns:
+      - name: inspection_id
+        description: Inspection identifier.
+        data_tests: [unique, not_null]
+      - name: element_id
+        description: Element that was inspected.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_produced_elements')
+                field: element_id
+      - name: inspected_at
+        description: When the inspection happened.
+        data_tests: [not_null]
+      - name: result
+        description: Inspection result.
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['pass', 'rework', 'scrap']
+      - name: defect_type
+        description: Defect found. NULL when the result is pass.
+      - name: source_file
+        description: Monthly extract file the row arrived in.
+      - name: arrived_late
+        description: True when the row arrived in a later month's file than the month it was inspected.
+
+  - name: stg_deliveries
+    description: Deliveries to construction sites, one row per delivered element.
+    columns:
+      - name: delivery_id
+        description: Delivery identifier.
+        data_tests: [unique, not_null]
+      - name: element_id
+        description: Element that was delivered. Each element is delivered at most once.
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_produced_elements')
+                field: element_id
+      - name: delivered_at
+        description: When the element arrived on site.
+        data_tests: [not_null]
+      - name: site_city
+        description: City the element was delivered to.

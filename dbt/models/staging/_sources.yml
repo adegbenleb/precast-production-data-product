@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: bronze
+    description: Raw CSV files loaded unchanged into Delta tables by sql/01_bronze.sql. All columns are strings.
+    database: production_dp
+    schema: bronze
+    tables:
+      - name: plants
+        description: One row per plant.
+      - name: element_types
+        description: One row per precast element type.
+      - name: projects
+        description: One row per construction project.
+      - name: production_orders
+        description: One row per order version. Contains plant name variants, duplicates and blanks.
+      - name: produced_elements
+        description: One row per produced element. Weight is a mix of tonnes and kilograms.
+      - name: quality_inspections
+        description: One row per inspection, from monthly extract files. Some rows arrive late.
+      - name: deliveries
+        description: One row per delivered element.

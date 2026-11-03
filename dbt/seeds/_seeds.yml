@@ -1,0 +1,17 @@
+version: 2
+
+seeds:
+  - name: plant_name_mapping
+    description: >
+      Maps a plant name, after formatting noise is removed (upper case, single spaces, no hyphens),
+      to the official plant_id. Maintained as data: a new alias is one new row, not a code change.
+    columns:
+      - name: variant_name
+        description: Plant name as it appears in source systems, normalised to upper case with single spaces.
+        data_tests:
+          - unique
+          - not_null
+      - name: plant_id
+        description: Official plant identifier (P01, P02, P03).
+        data_tests:
+          - not_null

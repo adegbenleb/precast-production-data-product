@@ -9,3 +9,4 @@ logs/
 dbt_packages/
 .DS_Store
 data/
+.user.yml
