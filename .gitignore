@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+profiles.yml
+.venv/
+__pycache__/
+target/
+logs/
+dbt_packages/
+.DS_Store
+data/output/
