@@ -1,0 +1,155 @@
+version: 2
+
+models:
+  - name: dim_plant
+    description: Certified plant dimension. One row per plant.
+    columns:
+      - name: plant_key
+        description: Key used by the fact table. Same value as plant_id.
+        data_tests: [unique, not_null]
+      - name: plant_id
+        description: Official plant identifier (P01, P02, P03).
+      - name: plant_name
+        description: Official plant name (Plant A, Plant B, Plant C).
+        data_tests: [unique, not_null]
+      - name: region
+        description: Sales region the plant belongs to (North, Central, South).
+
+  - name: dim_element_type
+    description: Certified precast element type dimension. One row per element type.
+    columns:
+      - name: element_type_key
+        description: Key used by the fact table. Same value as element_type_code.
+        data_tests: [unique, not_null]
+      - name: element_type_code
+        description: Short code for the element type, for example HCS.
+      - name: element_type_name
+        description: Readable element type name, for example hollow-core slab or sandwich wall panel.
+        data_tests: [not_null]
+
+  - name: dim_project
+    description: >
+      Certified construction project dimension. One row per project, plus an UNKNOWN row for orders
+      that arrived without a project.
+    columns:
+      - name: project_key
+        description: Key used by the fact table. The project_id, or UNKNOWN.
+        data_tests: [unique, not_null]
+      - name: project_id
+        description: Project identifier. NULL for the UNKNOWN row.
+      - name: project_name
+        description: Project name.
+      - name: site_city
+        description: City of the construction site.
+      - name: building_type
+        description: Type of building, for example residential, office or parking garage.
+        data_tests: [not_null]
+
+  - name: dim_date
+    description: Calendar dimension. One row per day from 2026-01-01 to 2027-12-31.
+    columns:
+      - name: date_key
+        description: The calendar date. Joins to production_end_date in the fact table.
+        data_tests: [unique, not_null]
+      - name: date_day
+        description: The calendar date.
+      - name: year
+        description: Calendar year.
+      - name: quarter
+        description: Calendar quarter (1 to 4).
+      - name: month
+        description: Month number (1 to 12).
+      - name: month_name
+        description: Month name, for example October.
+      - name: month_start
+        description: First day of the month. Use for monthly trends.
+      - name: year_month
+        description: Year and month as text, for example 2026-10.
+      - name: iso_week
+        description: ISO week number.
+      - name: week_start
+        description: Monday of the week. Use for weekly trends.
+      - name: day_name
+        description: Day of the week, for example Monday.
+      - name: is_weekend
+        description: True on Saturday and Sunday.
+
+  - name: fct_element_production
+    description: >
+      CERTIFIED fact table for production, quality and delivery KPIs. One row per produced element.
+      Use this table, not bronze.plant_daily_output_report, which counts scrapped elements as output.
+    columns:
+      - name: element_id
+        description: Produced element identifier.
+        data_tests: [unique, not_null]
+      - name: order_id
+        description: Production order the element belongs to.
+        data_tests: [not_null]
+      - name: plant_key
+        description: Plant that produced the element. Joins to dim_plant.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_plant')
+                field: plant_key
+      - name: element_type_key
+        description: Element type. Joins to dim_element_type.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_element_type')
+                field: element_type_key
+      - name: project_key
+        description: Project the element is for. Joins to dim_project. UNKNOWN when the order had no project.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_project')
+                field: project_key
+      - name: production_end_date
+        description: Date production finished. The date that decides which period an element is counted in. Joins to dim_date.
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_date')
+                field: date_key
+      - name: production_start
+        description: When production of the element started.
+      - name: production_end
+        description: When production of the element finished.
+      - name: cycle_time_hours
+        description: Production end minus production start, in hours.
+        data_tests: [not_null]
+      - name: is_inspected
+        description: True when the element has at least one quality inspection. Inspected elements are the denominator for quality KPIs.
+      - name: inspection_count
+        description: Number of inspections. 2 when a rework was re-inspected.
+      - name: first_result
+        description: Result of the first inspection by time (pass, rework, scrap). NULL if not inspected.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['pass', 'rework', 'scrap']
+      - name: final_result
+        description: Result of the latest inspection by time (pass, rework, scrap). NULL if not inspected.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['pass', 'rework', 'scrap']
+      - name: final_inspected_at
+        description: When the latest inspection happened.
+      - name: passed_first_time
+        description: True when the first inspection was a pass. NULL if not inspected.
+      - name: delivered_at
+        description: When the element arrived on site. NULL if not delivered yet.
+      - name: due_date
+        description: Date the element was due on site, from the production order. NULL when missing in the source.
+      - name: delivered_on_time
+        description: True when delivered on or before the due date. NULL when not delivered or no due date, so it is excluded from the on-time rate.
+      - name: weight_t
+        description: Element weight in tonnes, after unit standardisation.
+        data_tests: [not_null]

@@ -23,3 +23,12 @@ Important design choices and why we made them.
 **Decision:** Bronze tables are built with `CREATE OR REPLACE TABLE ... AS SELECT ... FROM read_files(..., inferColumnTypes => false)`.
 **Why:** Strings keep the raw data exactly as delivered (kg weights, whitespace ids, blank dates), so every fix happens visibly in silver with a test. A full reload is idempotent and simple for a fixed demo dataset.
 **Trade-off:** A production pipeline would load incrementally (Auto Loader or `COPY INTO`) so it only processes new files and keeps load history. That is a possible stretch step with the Lakeflow Job.
+
+## 6. Gold keys are the stable source ids, with an UNKNOWN project member
+**Decision:** `plant_key = plant_id`, `element_type_key = element_type_code`, `project_key = project_id` (or `UNKNOWN`). No hashed surrogate keys.
+**Why:** The source ids are short, stable and unique, so readable keys make queries, the metric view and Genie answers easier to follow. Orders without a project point to an `UNKNOWN` row so totals stay complete and the gap stays visible.
+**Trade-off:** If a source system ever reused or changed ids, or we needed history (slowly changing dimensions), we would switch to surrogate keys.
+
+## 7. Descriptions live in dbt YAML and are pushed to Unity Catalog
+**Decision:** `+persist_docs` (relation and columns) is on for all models.
+**Why:** One source of truth for documentation. The same text shows in dbt docs, in Catalog Explorer and to Genie, which reads column comments to understand the data.

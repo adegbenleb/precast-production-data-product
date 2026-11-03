@@ -9,6 +9,10 @@ test-paths: ["tests"]
 
 models:
   precast:
+    # Write model and column descriptions into Unity Catalog as table and column comments.
+    +persist_docs:
+      relation: true
+      columns: true
     staging:
       +schema: silver
       +materialized: view
