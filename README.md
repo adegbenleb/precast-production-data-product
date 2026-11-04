@@ -94,7 +94,7 @@ production end date.
 Five questions with verified answers ([genie/benchmarks.md](genie/benchmarks.md)), two of them traps.
 Round 1, with no instructions and the uncertified table in the space, scored 4 of 5: for a ranking question Genie
 put `MEASURE()` inside `ORDER BY`, which metric views reject. After adding instructions
-([genie/instructions.md](genie/instructions.md)), round 2 scored 5 of 5. Rerun it any time with
+([genie/instructions.md](genie/instructions.md)), round 2 scored 5 of 5. The final space contains certified gold sources only and also scores 5 of 5. Rerun it any time with
 `scripts/genie_benchmark.py`.
 
 ## Key decisions

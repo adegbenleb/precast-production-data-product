@@ -42,3 +42,17 @@ measure once in SELECT and use its alias in ORDER BY and HAVING, with an example
 | 5 | Correct | 9.6 h in May, peak 13.1 h in August, 12.9 h in October. |
 
 Score: 5 of 5.
+
+### Round 3: 2026-11-04, final space (uncertified bronze table removed, instructions kept)
+
+Data sources: the metric view and the five certified gold tables only.
+
+| # | Result | Answer |
+|---|---|---|
+| 1 | Correct | Plant A 1,555, Plant B 1,680, Plant C 1,626 |
+| 2 | Correct | 2.9%, 8.0%, 4.2% |
+| 3 | Correct | 11.0% |
+| 4 | Correct | Plant C, 72.6% |
+| 5 | Correct | 9.6 h in May, peak 13.1 h in August, 12.9 h in October |
+
+Score: 5 of 5. The final space contains certified data only, as defence in depth next to the instructions.

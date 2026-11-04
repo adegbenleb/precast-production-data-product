@@ -12,6 +12,8 @@ for Plant A, Plant B and Plant C. Simulated data, May to October 2026.
 - `production_dp.gold.fct_element_production` (certified fact table, one row per produced element)
 - `production_dp.gold.dim_plant`, `dim_element_type`, `dim_project`, `dim_date`
 
+Final space (round 3): only the six sources above. The uncertified bronze table was removed after round 2.
+
 Round 1 of the benchmark deliberately also includes `production_dp.bronze.plant_daily_output_report`,
 the uncertified plant-reported output table (it counts scrapped elements as output and spells plant names
 12 different ways), with no instructions. That shows what Genie does with two candidate tables and no guidance.
