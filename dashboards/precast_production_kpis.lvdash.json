@@ -1,0 +1,536 @@
+{
+  "datasets": [
+    {
+      "name": "78392e3b",
+      "displayName": "production_kpis",
+      "asset_name": "production_dp.gold.production_kpis"
+    }
+  ],
+  "pages": [
+    {
+      "name": "44bfb788",
+      "displayName": "Precast Production KPIs",
+      "layout": [
+        {
+          "widget": {
+            "name": "elements-produced",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "78392e3b",
+                  "fields": [
+                    {
+                      "name": "measure(elements_produced)",
+                      "expression": "MEASURE(`elements_produced`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "showDescription": false,
+                "title": {
+                  "value": "**Elements Produced**",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(elements_produced)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "first-pass-yield",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "78392e3b",
+                  "fields": [
+                    {
+                      "name": "measure(first_pass_yield)",
+                      "expression": "MEASURE(`first_pass_yield`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "showDescription": false,
+                "title": {
+                  "value": "First Pass Yield",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(first_pass_yield)",
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "on-time-delivery",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "78392e3b",
+                  "fields": [
+                    {
+                      "name": "measure(on_time_delivery_rate)",
+                      "expression": "MEASURE(`on_time_delivery_rate`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "showDescription": false,
+                "title": {
+                  "value": "On-Time Delivery",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(on_time_delivery_rate)",
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "scrap-rate",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "78392e3b",
+                  "fields": [
+                    {
+                      "name": "measure(scrap_rate)",
+                      "expression": "MEASURE(`scrap_rate`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "showDescription": false,
+                "title": {
+                  "value": "Scrap Rate",
+                  "fields": []
+                }
+              },
+              "version": 2,
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(scrap_rate)",
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 1,
+            "width": 3,
+            "height": 2
+          }
+        },
+        {
+          "widget": {
+            "name": "average-cycle-time-by-month-hours",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "78392e3b",
+                  "fields": [
+                    {
+                      "name": "plant",
+                      "expression": "`plant`"
+                    },
+                    {
+                      "name": "monthly(production_month)",
+                      "expression": "DATE_TRUNC(\"MONTH\", `production_month`)"
+                    },
+                    {
+                      "name": "measure(avg_cycle_time_hours)",
+                      "expression": "MEASURE(`avg_cycle_time_hours`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "**Average cycle time by month (hours)**",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "monthly(production_month)",
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(avg_cycle_time_hours)",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "plant",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "scrap-rework-rate-by-plant",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "78392e3b",
+                  "fields": [
+                    {
+                      "name": "plant",
+                      "expression": "`plant`"
+                    },
+                    {
+                      "name": "measure(scrap_rate)",
+                      "expression": "MEASURE(`scrap_rate`)"
+                    },
+                    {
+                      "name": "measure(rework_rate)",
+                      "expression": "MEASURE(`rework_rate`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "**Scrap and rework rate by plant**",
+                  "fields": []
+                }
+              },
+              "version": 3,
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "plant",
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "fields": [
+                    {
+                      "fieldName": "measure(scrap_rate)"
+                    },
+                    {
+                      "fieldName": "measure(rework_rate)"
+                    }
+                  ],
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 3,
+            "width": 6,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "fpy-by-element-type",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "78392e3b",
+                  "fields": [
+                    {
+                      "name": "element_type",
+                      "expression": "`element_type`"
+                    },
+                    {
+                      "name": "measure(first_pass_yield)",
+                      "expression": "MEASURE(`first_pass_yield`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "widgetType": "bar",
+              "frame": {
+                "showTitle": true,
+                "title": {
+                  "value": "**First pass yield by element type**",
+                  "fields": []
+                }
+              },
+              "encodings": {
+                "x": {
+                  "fieldName": "element_type",
+                  "scale": {
+                    "type": "categorical",
+                    "sort": {
+                      "by": "y"
+                    }
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(first_pass_yield)",
+                  "scale": {
+                    "type": "quantitative"
+                  },
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "max",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 9,
+            "width": 12,
+            "height": 6
+          }
+        },
+        {
+          "widget": {
+            "name": "filter-plant",
+            "queries": [
+              {
+                "name": "dashboards/01f1d7e0ea2011528cabd0b18cf1b9d4/datasets/78392e3b_plant",
+                "query": {
+                  "datasetName": "78392e3b",
+                  "fields": [
+                    {
+                      "name": "plant",
+                      "expression": "`plant`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-multi-select",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "plant",
+                    "displayName": "Plant",
+                    "queryName": "dashboards/01f1d7e0ea2011528cabd0b18cf1b9d4/datasets/78392e3b_plant"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Plant"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 1
+          }
+        },
+        {
+          "widget": {
+            "name": "filter-production-month",
+            "queries": [
+              {
+                "name": "dashboards/01f1d7e0ea2011528cabd0b18cf1b9d4/datasets/78392e3b_production_month",
+                "query": {
+                  "datasetName": "78392e3b",
+                  "fields": [
+                    {
+                      "name": "production_month",
+                      "expression": "`production_month`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "widgetType": "filter-date-range-picker",
+              "encodings": {
+                "fields": [
+                  {
+                    "fieldName": "production_month",
+                    "displayName": "Production Month",
+                    "queryName": "dashboards/01f1d7e0ea2011528cabd0b18cf1b9d4/datasets/78392e3b_production_month"
+                  }
+                ]
+              },
+              "frame": {
+                "showTitle": true,
+                "title": "Production Month"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 0,
+            "width": 6,
+            "height": 1
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}
