@@ -20,6 +20,7 @@ The instructions below are the fix.
 ## General instructions (paste into the space's Instructions)
 
 - For any KPI, use the metric view `production_dp.gold.production_kpis` and its measures with `MEASURE(...)`: elements_produced, inspected_elements, scrap_rate, rework_rate, first_pass_yield, on_time_delivery_rate, avg_cycle_time_hours, total_weight_t. Never write your own formula for these KPIs.
+- To rank, sort or filter on a measure, compute it once in SELECT with MEASURE() and use its alias in ORDER BY and HAVING. Never put MEASURE() inside ORDER BY or HAVING: metric views reject it. Example: `SELECT plant, MEASURE(on_time_delivery_rate) AS otd FROM production_dp.gold.production_kpis GROUP BY ALL ORDER BY otd ASC LIMIT 1`.
 - Rework rate means elements that needed rework at any inspection divided by inspected elements (`MEASURE(rework_rate)`). Do not compute it from `final_result = 'rework'`: reworked elements are always re-inspected, so that would always be 0%.
 - All periods use the production end date (`production_month`, `production_week` in the metric view, `production_end_date` in the fact table).
 - Only use certified gold tables. Never use any table in the bronze or silver schema.
