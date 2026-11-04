@@ -1,6 +1,7 @@
--- Step 1:10 to 1:30: row-level security. A plant manager sees only their plant's rows.
--- The filter sits on the certified fact table, so the metric view, dashboard and Genie inherit it.
--- No email addresses are written in this file: the test mapping uses current_user().
+-- Row-level security: a plant manager sees only their plant's rows.
+-- This file creates the access mapping and the filter function. dbt attaches the filter to
+-- gold.fct_element_production in a post-hook after every build, so run this BEFORE dbt build.
+-- No email addresses are written in this file: mappings use current_user().
 
 CREATE TABLE IF NOT EXISTS production_dp.ref.user_plant_access (
   user_email STRING NOT NULL COMMENT 'Databricks user name (email) of the person getting access.',
@@ -18,18 +19,6 @@ RETURN EXISTS (
     AND a.plant_id IN (plant_key, 'ALL')
 );
 
--- Test setup from the spec: map yourself to Plant A only.
+-- The person running the pipeline needs all plants, or dbt's tests only see part of the data.
 DELETE FROM production_dp.ref.user_plant_access WHERE user_email = current_user();
-INSERT INTO production_dp.ref.user_plant_access VALUES (current_user(), 'P01');
-
-ALTER TABLE production_dp.gold.fct_element_production
-SET ROW FILTER production_dp.ref.plant_row_filter ON (plant_key);
-
--- Check: you should now see only P01 in the fact table and only Plant A in the metric view.
-SELECT current_user() AS me, plant_key, count(*) AS row_count
-FROM production_dp.gold.fct_element_production
-GROUP BY ALL;
-
-SELECT plant, MEASURE(elements_produced) AS elements_produced
-FROM production_dp.gold.production_kpis
-GROUP BY ALL;
+INSERT INTO production_dp.ref.user_plant_access VALUES (current_user(), 'ALL');

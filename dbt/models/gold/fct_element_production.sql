@@ -1,6 +1,6 @@
 -- Certified fact table. Grain: one row per produced element.
 
--- CREATE OR REPLACE drops the row filter, so re-apply it after every build (created in sql/20_governance.sql).
+-- CREATE OR REPLACE drops the row filter, so re-apply it after every build (function created in sql/20_governance.sql).
 {{ config(post_hook="ALTER TABLE {{ this }} SET ROW FILTER production_dp.ref.plant_row_filter ON (plant_key)") }}
 
 with inspections as (

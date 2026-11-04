@@ -1,4 +1,4 @@
--- Switch the current user to leadership access (all plants), after testing the Plant A filter.
+-- Switch the current user back to leadership access (all plants) after sql/21_test_plant_a.sql.
 -- Needed for building the dashboard and Genie space, and for dbt tests that count every fact row.
 
 DELETE FROM production_dp.ref.user_plant_access WHERE user_email = current_user();
