@@ -69,21 +69,41 @@ measures:
   - name: scrap_rate
     expr: TRY_DIVIDE(COUNT_IF(source.final_result = 'scrap'), COUNT_IF(source.is_inspected))
     display_name: Scrap Rate
+    format:
+      type: percentage
+      decimal_places:
+        type: exact
+        places: 1
     comment: Elements with final result scrap divided by inspected elements.
     synonyms: [scrap, scrap percentage]
   - name: rework_rate
     expr: TRY_DIVIDE(COUNT_IF(source.was_reworked), COUNT_IF(source.is_inspected))
     display_name: Rework Rate
+    format:
+      type: percentage
+      decimal_places:
+        type: exact
+        places: 1
     comment: Elements that needed rework at any inspection divided by inspected elements.
     synonyms: [rework, rework percentage]
   - name: first_pass_yield
     expr: TRY_DIVIDE(COUNT_IF(source.passed_first_time), COUNT_IF(source.is_inspected))
     display_name: First Pass Yield
+    format:
+      type: percentage
+      decimal_places:
+        type: exact
+        places: 1
     comment: Elements that passed at their first inspection divided by inspected elements.
     synonyms: [FPY, yield, right first time]
   - name: on_time_delivery_rate
     expr: TRY_DIVIDE(COUNT_IF(source.delivered_on_time), COUNT(source.delivered_on_time))
     display_name: On-Time Delivery Rate
+    format:
+      type: percentage
+      decimal_places:
+        type: exact
+        places: 1
     comment: Elements delivered on or before the due date divided by delivered elements that have a due date.
     synonyms: [OTD, on-time delivery, delivery reliability]
   - name: avg_cycle_time_hours
